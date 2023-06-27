@@ -16,7 +16,7 @@ const adminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 6,
     maxlength: 1024,
   },
   shopName: {
@@ -28,7 +28,7 @@ const adminSchema = new mongoose.Schema({
   shopAddress: {
     type: String,
     required: true,
-    min: 4,
+    min: 5,
     max: 255,
   },
   phoneNo: {
@@ -45,9 +45,9 @@ const validateAdmin = (user) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(5).max(1024),
-    shopName: Joi.string().required().min(4).max(255),
-    shopAddress: Joi.string().required().min(4).max(255),
+    password: Joi.string().required().min(6).max(1024),
+    shopName: Joi.string().required().min(1).max(255),
+    shopAddress: Joi.string().required().min(5).max(255),
     phoneNo: myCustomJoi
       .string()
       .phoneNumber({ defaultCountry: "IN", strict: true })

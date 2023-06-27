@@ -29,8 +29,8 @@ router.post("/login", async (req, res) => {
   res.header("auth-token", token).send({ token: token });
 });
 
-router.post("/register", async (req, res) => {
-  const { error, value } = validateUser(req.body);
+router.post("/signup", async (req, res) => {
+  const { error, value } = validateAdmin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
   let user = await Admin.findOne({ email: req.body.email });
   if (user)

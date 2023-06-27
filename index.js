@@ -6,6 +6,7 @@ const adminAuth = require("./admin/routes/auth");
 
 app.use(express.json());
 app.use("/admin", adminAuth);
+app.use("/catalogue/products", adminAuth);
 
 mongoose
   .connect("mongodb://localhost/admin-backend")
@@ -14,7 +15,7 @@ mongoose
     console.error("Could not connect to MongoDB..");
   });
 
-const port = process.env.USER_PORT || 5000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`Server running on port:`);
+  console.log(`Server running on port: ${port}`);
 });
