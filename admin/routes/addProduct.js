@@ -24,18 +24,26 @@ const path = require("path");
 router.post("/add", async (req, res) => {
   const { error, value } = validateProduct(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-  const product = new Product(
-    _.pick(req.body, [
+  const decodedToken = jwt.verify(
+    req.headers["auth-token"],
+    process.env.TOKEN_SECRET
+  );
+  const adminId = decodedToken.id;
+  console.log(adminId);
+  const product = new Product({
+    ..._.pick(req.body, [
       "productName",
       "productCategory",
       "price",
       "discountedPrice",
       "inStock",
       "description",
-    ])
-  );
-  await user.save();
-  res.send(user);
+    ]),
+    adminId: adminId,
+  });
+
+  await product.save();
+  res.send(product);
 });
 
 module.exports = router;
