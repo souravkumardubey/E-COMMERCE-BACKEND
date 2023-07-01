@@ -37,6 +37,7 @@ const adminSchema = new mongoose.Schema({
     min: 10,
     max: 10,
   },
+  products: [String],
 });
 
 const Admin = mongoose.model("Admin", adminSchema);

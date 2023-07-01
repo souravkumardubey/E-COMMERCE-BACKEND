@@ -1,6 +1,6 @@
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
-const { Admin, validateAdmin } = require("../models/adminSignUp");
+const { Admin, validateAdmin } = require("../models/admin");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const express = require("express");
