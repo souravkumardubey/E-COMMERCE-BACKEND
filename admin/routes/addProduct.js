@@ -21,6 +21,16 @@ const path = require("path");
 //   },
 // });
 
+router.get("/", async (req, res) => {
+  const decodedToken = jwt.verify(
+    req.headers["auth-token"],
+    process.env.TOKEN_SECRET
+  );
+  const reqId = decodedToken.id;
+  const products = await Product.find({ adminId: reqId });
+  res.json(products);
+});
+
 router.post("/add", async (req, res) => {
   const { error, value } = validateProduct(req.body);
   if (error) return res.status(400).send(error.details[0].message);
