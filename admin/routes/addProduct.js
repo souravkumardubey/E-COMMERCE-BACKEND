@@ -5,7 +5,7 @@ const _ = require("lodash");
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const { Product, validateProduct } = require("../models/product");
+const { Product, validateProduct } = require("../models/Product");
 const multer = require("multer");
 const path = require("path");
 
