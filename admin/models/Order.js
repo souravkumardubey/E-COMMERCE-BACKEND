@@ -9,6 +9,10 @@ const orderSchema = new mongoose.Schema({
           type: String,
           required: true,
         },
+        productDescription: {
+          type: String,
+          required: true,
+        },
         price: {
           type: Number,
           required: true,
@@ -45,10 +49,25 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", productSchema);
 
-// const validateOrder = (user) => {
-//   const schema = Joi.object({});
-//   return schema.validate(user);
-// };
+const validateOrder = (order) => {
+  const productSchema = Joi.object({
+    productId: Joi.string().required(),
+    productDescription: Joi.string().required(),
+    price: Joi.number().required(),
+    quantity: Joi.number().required(),
+    totalCost: Joi.number().required(),
+  });
+
+  const schema = Joi.object({
+    orders: Joi.array().items(productSchema).required(),
+    orderedDate: Joi.date().required(),
+    orderStatus: Joi.string().required(),
+    address: Joi.string().required(),
+    totalPrice: Joi.number().required(),
+  });
+
+  return schema.validate(order);
+};
 
 exports.Order = Order;
 exports.validateOrder = validateOrder;
