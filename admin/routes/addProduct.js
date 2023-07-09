@@ -56,8 +56,8 @@ router.post("/add", async (req, res) => {
   res.send(product);
 });
 
-router.delete("/", async (req, res) => {
-  const delId = req.body.id;
+router.delete("/:id", async (req, res) => {
+  const delId = req.params.id;
   const products = await Product.findByIdAndDelete({ _id: delId });
   res.status(200).send();
 });
