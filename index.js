@@ -3,11 +3,11 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const adminAuth = require("./admin/routes/auth");
-const addProduct = require("./admin/routes/addProduct");
+const product = require("./admin/routes/product");
 
 app.use(express.json());
 app.use("/admin", adminAuth);
-app.use("/catalogue/products", addProduct);
+app.use("/catalogue/products", product);
 
 mongoose
   .connect("mongodb://localhost/admin-backend")
