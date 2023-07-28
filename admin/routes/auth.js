@@ -25,7 +25,10 @@ router.post("/login", async (req, res) => {
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send("Invalid email or password.");
 
-  const token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET);
+  const token = jwt.sign(
+    { id: user._id, role: "admin" },
+    process.env.TOKEN_SECRET
+  );
   res.header("auth-token", token).send({ token: token });
 });
 
