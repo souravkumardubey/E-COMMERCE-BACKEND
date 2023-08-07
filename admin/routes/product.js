@@ -32,45 +32,54 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-  const { error, value } = validateProduct(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  const decodedToken = jwt.verify(
-    req.headers["auth-token"],
-    process.env.TOKEN_SECRET
-  );
-  const adminId = decodedToken.id;
-  console.log(adminId);
-  const product = new Product({
-    ..._.pick(req.body, [
-      "productName",
-      "productCategory",
-      "price",
-      "discountedPrice",
-      "inStock",
-      "description",
-    ]),
-    adminId: adminId,
-  });
+  try {
+    const { error, value } = validateProduct(req.body);
+    if (error) return res.status(404).send(new Error(error.details[0].message));
+    const decodedToken = jwt.verify(
+      req.headers["auth-token"],
+      process.env.TOKEN_SECRET
+    );
+    const adminId = decodedToken.id;
+    // console.log(adminId);
+    const product = new Product({
+      ..._.pick(req.body, [
+        "productName",
+        "productCategory",
+        "price",
+        "discountedPrice",
+        "inStock",
+        "description",
+      ]),
+      adminId: adminId,
+    });
 
-  await product.save();
-  res.send(product);
+    await product.save();
+    res.status(200).send(product);
+  } catch (error) {
+    return res.status(404).send(new Error("Something went wrong."));
+  }
 });
 
 router.post("/edit/:id", async (req, res) => {
-  const productId = req.params.productId;
-  const product = await Product.findById(productId);
-  if (!product) return res.status(404).send("Product not found.");
-
-  res.render("edit-product", {
-    product,
-  });
+  try {
+    const productId = req.params.productId;
+    const product = await Product.findById(productId);
+    if (!product)
+      return res.status(404).json({ message: "Product not found." });
+    res.status(200).send(product);
+  } catch (error) {
+    return res.status(404).send(new Error("Product not found."));
+  }
 });
 
 router.delete("/:id", async (req, res) => {
-  const delId = req.params.id;
-  const products = await Product.findByIdAndDelete({ _id: delId });
-
-  res.status(200).send();
+  try {
+    const delId = req.params.id;
+    const products = await Product.findByIdAndDelete({ _id: delId });
+    return res.status(404).send(new Error("Product not found."));
+  } catch (error) {
+    return res.status(404).send(new Error("Product not found."));
+  }
 });
 
 module.exports = router;
