@@ -45,9 +45,13 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  orderStatus: {
+    type: String,
+    default: "Pending",
+  },
 });
 
-const Order = mongoose.model("Order", productSchema);
+const Order = mongoose.model("Order", orderSchema);
 
 const validateOrder = (order) => {
   const productSchema = Joi.object({
@@ -64,6 +68,7 @@ const validateOrder = (order) => {
     orderStatus: Joi.string().required(),
     address: Joi.string().required(),
     totalPrice: Joi.number().required(),
+    orderStatus: Joi.boolean(),
   });
 
   return schema.validate(order);
