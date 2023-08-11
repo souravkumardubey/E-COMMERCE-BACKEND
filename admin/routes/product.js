@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   );
   const reqId = decodedToken.id;
   const products = await Product.find({ adminId: reqId });
-  res.json(products);
+  return res.json(products);
 });
 
 router.post("/add", async (req, res) => {
@@ -72,7 +72,19 @@ router.post("/edit/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.get("/product/:id", async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const product = await Product.findById(productId);
+    if (!product)
+      return res.status(404).json({ message: "Product not found." });
+    res.status(200).send(product);
+  } catch (error) {
+    return res.status(404).send(new Error("Product not found."));
+  }
+});
+
+router.delete("/product/:id", async (req, res) => {
   try {
     const delId = req.params.id;
     const products = await Product.findByIdAndDelete({ _id: delId });
