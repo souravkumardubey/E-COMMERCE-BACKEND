@@ -5,6 +5,28 @@ const _ = require("lodash");
 const router = express.Router();
 const { Order, validateOrder } = require("../models/Order");
 
-router.post("/new-order", async (req, res) => {});
+router.post("/orders", async (req, res) => {
+  try {
+    const orders = await Order.find();
+    if (!orders)
+      return res.status(404).json({ message: "Something went wrong." });
+
+    return res.status(200).send(orders);
+  } catch (error) {
+    return res.status(404).json({ message: "Something went wrong." });
+  }
+});
+
+router.put("/order/:id", async (req, res) => {
+  try {
+    const order = await Order.findByIdAndUpdate(req.params.id, {
+      orderStatus: "Accepted",
+    });
+    if (!order) return res.status(404).json({ message: "No product found." });
+    return res.status(200).send(order);
+  } catch (error) {
+    return res.status(404).json({ message: "No product found." });
+  }
+});
 
 module.exports = router;
