@@ -5,12 +5,14 @@ const mongoose = require("mongoose");
 const adminAuth = require("./admin/routes/auth");
 const product = require("./admin/routes/product");
 const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
 
 // app.use(bodyParser.json());
 
 app.use(express.json());
 app.use("/admin", adminAuth);
 app.use("/admin/products", product);
+app.use(methodOverride("_method"));
 
 mongoose
   .connect("mongodb://localhost/admin-backend")
