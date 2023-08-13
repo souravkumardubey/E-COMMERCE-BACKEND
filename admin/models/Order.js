@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const orderSchema = new mongoose.Schema({
-  orders: {
+  items: {
     type: [
       {
         productId: {
@@ -42,8 +42,8 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   orderStatus: {
-    type: Boolean,
-    default: false,
+    type: String,
+    default: "Pending",
   },
 });
 
@@ -59,7 +59,7 @@ const validateOrder = (order) => {
   });
 
   const schema = Joi.object({
-    orders: Joi.array().items(productSchema).required(),
+    items: Joi.array().items(productSchema).required(),
     orderedDate: Joi.date().required(),
     address: Joi.string().required(),
     totalPrice: Joi.number().required(),
