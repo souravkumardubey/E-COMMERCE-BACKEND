@@ -31,7 +31,7 @@ const orderSchema = new mongoose.Schema({
   },
   orderedDate: {
     type: Date,
-    required: true,
+    default: new Date(),
   },
   address: {
     type: String,
@@ -63,7 +63,7 @@ const validateOrder = (order) => {
     orderedDate: Joi.date().required(),
     address: Joi.string().required(),
     totalPrice: Joi.number().required(),
-    orderStatus: Joi.boolean(),
+    orderStatus: Joi.string(),
   });
 
   return schema.validate(order);
