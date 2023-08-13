@@ -5,7 +5,7 @@ const _ = require("lodash");
 const router = express.Router();
 const { Order, validateOrder } = require("../models/Order");
 
-router.get("/orders", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const orders = await Order.find();
     if (!orders)
@@ -17,7 +17,7 @@ router.get("/orders", async (req, res) => {
   }
 });
 
-router.post("/orders/new-order", async (req, res) => {
+router.post("/new-order", async (req, res) => {
   try {
     const { error, value } = validateOrder(req.body);
     if (error) return res.status(404).send(new Error(error.details[0].message));
