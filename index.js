@@ -3,7 +3,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const adminAuth = require("./admin/routes/auth");
-const product = require("./admin/routes/product");
+const products = require("./admin/routes/products");
+const orders = require("./admin/routes/orders");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 
@@ -11,7 +12,8 @@ const methodOverride = require("method-override");
 
 app.use(express.json());
 app.use("/admin", adminAuth);
-app.use("/admin/products", product);
+app.use("/admin/products", products);
+app.use("/admin/orders", orders);
 app.use(methodOverride("_method"));
 
 mongoose
