@@ -64,8 +64,7 @@ router.post("/edit/:id", async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId);
-    if (!product)
-      return res.status(404).json({ message: "Product not found." });
+    if (!product) return res.status(404).send(new Error("Product not found."));
     res.status(200).send(product);
   } catch (error) {
     return res.status(404).send(new Error("Product not found."));
@@ -76,8 +75,7 @@ router.get("/product/:id", async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId);
-    if (!product)
-      return res.status(404).json({ message: "Product not found." });
+    if (!product) return res.status(404).send(new Error("Product not found."));
     res.status(200).send(product);
   } catch (error) {
     return res.status(404).send(new Error("Product not found."));
