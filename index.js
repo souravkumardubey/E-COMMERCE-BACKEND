@@ -2,9 +2,9 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const adminAuth = require("./admin/routes/auth");
-const products = require("./admin/routes/products");
-const orders = require("./admin/routes/orders");
+const adminAuth = require("./server/routes/auth");
+const products = require("./server/routes/products");
+const orders = require("./server/routes/orders");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 
