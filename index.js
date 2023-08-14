@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const adminAuth = require("./server/routes/auth");
+const adminAuth = require("./server/routes/admin-auth");
 const products = require("./server/routes/products");
 const orders = require("./server/routes/orders");
 const bodyParser = require("body-parser");
