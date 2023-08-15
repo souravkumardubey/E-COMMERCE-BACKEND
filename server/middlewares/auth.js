@@ -1,20 +1,21 @@
 const jwt = require("jsonwebtoken");
-const authenticateJWT = (req, res, next) => {
-  const decodedToken = jwt.verify(
-    req.headers["auth-token"],
-    process.env.TOKEN_SECRET
-  );
-  if (decodedToken) {
-    const token = decodedToken.split(" ")[1];
+const jwtSecret = process.env.TOKEN_SECRET;
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403);
-      req.user = user;
+const auth = (req, res, next) => {
+  try {
+    const token = req.cookies?.authToken;
+    if (!token) return res.status(404).json({ message: "Access denied" });
+    try {
+      const decoded = jwt.verify(token, jwtSecret);
       next();
-    });
-  } else {
-    res.sendStatus(401);
+    } catch (error) {
+      console.log(error);
+      return res.status(404).send(new Error(error.message));
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(404).send(new Error(error.message));
   }
 };
 
-module.exports = authenticateJWT;
+module.exports = auth;
