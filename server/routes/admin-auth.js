@@ -15,23 +15,43 @@ const validate = (user) => {
   return schema.validate(user);
 };
 
+// router.post("/login", async (req, res) => {
+//   const { error } = validate(req.body);
+//   if (error) return res.status(400).send(error.details[0].message);
+
+//   let user = await Admin.findOne({ email: req.body.email });
+//   if (!user) return res.status(400).send("Invalid email or password.");
+
+//   const validPassword = await bcrypt.compare(req.body.password, user.password);
+//   if (!validPassword) return res.status(400).send("Invalid email or password.");
+
+// const token = jwt.sign(
+//   { id: user._id, role: "admin" },
+//   process.env.TOKEN_SECRET
+// );
+//   res.header("auth-token", token).send({ token: token });
+// });
 router.post("/login", async (req, res) => {
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  try {
+    const { email, password } = req.body;
+    const user = await Admin.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Invalid credentials" });
 
-  let user = await Admin.findOne({ email: req.body.email });
-  if (!user) return res.status(400).send("Invalid email or password.");
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!user) return res.status(404).json({ message: "Invalid credentials" });
 
-  const validPassword = await bcrypt.compare(req.body.password, user.password);
-  if (!validPassword) return res.status(400).send("Invalid email or password.");
-
-  const token = jwt.sign(
-    { id: user._id, role: "admin" },
-    process.env.TOKEN_SECRET
-  );
-  res.header("auth-token", token).send({ token: token });
+    const token = jwt.sign(
+      { id: user._id, role: "admin" },
+      process.env.TOKEN_SECRET
+    );
+    res.cookie("authToken", token, {
+      httpOnly: true,
+    });
+    res.header("authToken", token).send({ token: token });
+  } catch (err) {
+    return res.status(404).json({ message: "Invalid credentials" });
+  }
 });
-
 router.post("/signup", async (req, res) => {
   const { error, value } = validateAdmin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
