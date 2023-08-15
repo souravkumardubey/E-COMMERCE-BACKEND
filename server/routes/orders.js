@@ -4,9 +4,10 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const router = express.Router();
+const adminAuth = require("../middlewares/auth");
 const { Order, validateOrder } = require("../models/Order");
 
-router.get("/", async (req, res) => {
+router.get("/", adminAuth, async (req, res) => {
   try {
     const orders = await Order.find();
     if (!orders)
@@ -39,7 +40,7 @@ router.post("/new-order", async (req, res) => {
   }
 });
 
-router.get("/order/:id", async (req, res) => {
+router.get("/order/:id", adminAuth, async (req, res) => {
   try {
     const order = await Order.findById({ _id: req.params.id });
     if (!order) return res.status(404).json({ message: "No order found." });
@@ -49,7 +50,7 @@ router.get("/order/:id", async (req, res) => {
   }
 });
 
-router.put("/order-accepted/:id", async (req, res) => {
+router.put("/order-accepted/:id", adminAuth, async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(req.params.id, {
       orderStatus: "Accepted",
