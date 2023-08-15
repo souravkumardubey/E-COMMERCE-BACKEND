@@ -7,10 +7,12 @@ const products = require("./server/routes/products");
 const orders = require("./server/routes/orders");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
+const cookieParser = require("cookie-parser");
 
 // app.use(bodyParser.json());
 
 app.use(express.json());
+app.use(cookieParser());
 app.use("/admin", adminAuth);
 app.use("/admin/products", products);
 app.use("/admin/orders", orders);
