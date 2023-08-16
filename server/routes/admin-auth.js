@@ -52,6 +52,7 @@ router.post("/login", async (req, res) => {
     return res.status(404).json({ message: "Invalid credentials" });
   }
 });
+
 router.post("/signup", async (req, res) => {
   const { error, value } = validateAdmin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -72,6 +73,15 @@ router.post("/signup", async (req, res) => {
   user.password = await bcrypt.hash(user.password, salt);
   await user.save();
   res.send(user);
+});
+
+router.get("/logout", (req, res) => {
+  try {
+    res.clearCookie("authToken");
+    res.status(200).send("User successfully logged out");
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;
