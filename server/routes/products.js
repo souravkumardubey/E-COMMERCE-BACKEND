@@ -6,6 +6,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const { Product, validateProduct } = require("../models/Product");
+const { admin, user } = require("../middlewares/auth");
 const multer = require("multer");
 const path = require("path");
 
@@ -31,7 +32,7 @@ router.get("/", async (req, res) => {
   return res.json(products);
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add", admin, async (req, res) => {
   try {
     const { error, value } = validateProduct(req.body);
     if (error) return res.status(404).send(new Error(error.details[0].message));
@@ -40,7 +41,6 @@ router.post("/add", async (req, res) => {
       process.env.TOKEN_SECRET
     );
     const adminId = decodedToken.id;
-    // console.log(adminId);
     const product = new Product({
       ..._.pick(req.body, [
         "productName",
@@ -60,7 +60,7 @@ router.post("/add", async (req, res) => {
   }
 });
 
-router.post("/edit/:id", async (req, res) => {
+router.get("/edit/:id", admin, async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId);
@@ -71,22 +71,38 @@ router.post("/edit/:id", async (req, res) => {
   }
 });
 
-router.get("/product/:id", async (req, res) => {
-  try {
-    const productId = req.params.productId;
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).send(new Error("Product not found."));
-    res.status(200).send(product);
-  } catch (error) {
-    return res.status(404).send(new Error("Product not found."));
-  }
-});
+// router.put("/edit/:id", async (req, res) => {
+//   try {
+//     await Product.findByIdAndUpdate(req.params.id, {
+//       productName: req.body.productName,
+//       productCategory: req.body.productCategory,
+//       price: req.body.price,
+//       discountedPrice: req.body.discountedPrice,
+//       inStock: req.body.inStock,
+//       description: req.body.description,
+//     });
+//     return res.status(200).send("Product updated");
+//   } catch (error) {
+//     return res.status(404).send(new Error("Product not found."));
+//   }
+// });
+
+// router.get("/product/:id", async (req, res) => {
+//   try {
+//     const productId = req.params.productId;
+//     const product = await Product.findById(productId);
+//     if (!product) return res.status(404).send(new Error("Product not found."));
+//     res.status(200).send(product);
+//   } catch (error) {
+//     return res.status(404).send(new Error("Product not found."));
+//   }
+// });
 
 router.delete("/product/:id", async (req, res) => {
   try {
     const delId = req.params.id;
     const products = await Product.findByIdAndDelete({ _id: delId });
-    return res.status(404).send(new Error("Product not found."));
+    return res.status(200).send(new Error("Product deleted."));
   } catch (error) {
     return res.status(404).send(new Error("Product not found."));
   }

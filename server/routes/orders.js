@@ -19,7 +19,7 @@ router.get("/", admin, async (req, res) => {
   }
 });
 
-router.post("/new-order", async (req, res) => {
+router.post("/new-order", user, async (req, res) => {
   try {
     const { error, value } = validateOrder(req.body);
     if (error) return res.status(404).send(error.details[0].message);
@@ -50,7 +50,7 @@ router.get("/order/:id", admin, async (req, res) => {
   }
 });
 
-router.put("/order-accepted/:id", adminAuth, async (req, res) => {
+router.put("/order-accepted/:id", async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(req.params.id, {
       orderStatus: "Accepted",
