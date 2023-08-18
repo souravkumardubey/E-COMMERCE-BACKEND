@@ -39,5 +39,4 @@ const user = (req, res, next) => {
   }
 };
 
-module.exports = admin;
-module.exports = user;
+module.exports = { admin, user };
