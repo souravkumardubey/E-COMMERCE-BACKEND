@@ -22,7 +22,7 @@ const admin = (req, res, next) => {
 
 const user = (req, res, next) => {
   try {
-    const token = req.cookies?.authToken;
+    const token = req.cookies?.userAuthToken;
     if (!token) return res.status(404).json({ message: "Access denied" });
     try {
       const decoded = jwt.verify(token, jwtSecret);
