@@ -27,17 +27,20 @@ router.get("/", async (req, res) => {
 });
 
 // * add product to cart
-router.post("/add/:id", admin, async (req, res) => {
+router.put("/add/:id", async (req, res) => {
   try {
     const decodedToken = jwt.verify(
       req.headers["auth-token"],
       process.env.TOKEN_SECRET
     );
     const reqId = decodedToken.id;
-    const account = await User.findOne(reqId);
-    const prod = await Product.findOne(req.params.id);
+    const account = await User.findOne({ _id: reqId });
+    const prod = await Product.findOne({ _id: req.params.id });
     prod.quantity = 1;
     account.cart.push(prod);
+    const updCart = await User.findByIdAndUpdate(reqId, {
+      $set: { cart: account.cart },
+    });
     return res.status(200).send("Product added to cart.");
   } catch (error) {
     return res.status(404).send(new Error("Something went wrong"));
