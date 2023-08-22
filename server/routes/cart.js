@@ -63,13 +63,44 @@ router.put("/edit/:id", async (req, res) => {
   }
 });
 
+// router.delete("/:id", async (req, res) => {
+//   try {
+//     const decodedToken = jwt.verify(
+//       req.headers["auth-token"],
+//       process.env.TOKEN_SECRET
+//     );
+//     const userId = decodedToken.id;
+//     const productId = req.params.id;
+//     return res.status(200).send("Product deleted.");
+//   } catch (error) {
+//     return res.status(404).send(new Error("Product not found."));
+//   }
+// });
+
 router.delete("/:id", async (req, res) => {
   try {
-    const delId = req.params.id;
-    const products = await Product.findByIdAndDelete({ _id: delId });
-    return res.status(404).send(new Error("Product deleted."));
+    const decodedToken = jwt.verify(
+      req.headers["auth-token"],
+      process.env.TOKEN_SECRET
+    );
+    const userId = decodedToken.id;
+    const productId = req.params.id;
+    const user = await User.findById(userId);
+
+    if (!user) return res.status(404).send("User not found.");
+
+    const productIndex = user.cart.findIndex(
+      (product) => product._id.toString() === productId
+    );
+
+    if (productIndex === -1)
+      return res.status(404).send("Product not found in the cart.");
+
+    user.cart.splice(productIndex, 1);
+    await user.save();
+    return res.status(200).send("Product deleted from cart.");
   } catch (error) {
-    return res.status(404).send(new Error("Product not found."));
+    return res.status(500).send("An error occurred.");
   }
 });
 
