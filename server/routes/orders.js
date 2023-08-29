@@ -7,11 +7,19 @@ const router = express.Router();
 const { admin, user } = require("../middlewares/auth");
 const { Order, validateOrder } = require("../models/Order");
 
-router.get("/", admin, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const orders = await Order.find();
-    if (!orders)
-      return res.status(404).json({ message: "Something went wrong." });
+    const decodedToken = jwt.verify(
+      req.headers["auth-token"],
+      process.env.TOKEN_SECRET
+    );
+
+    const reqId = decodedToken.id;
+    const orders = await Order.find({ customerId: reqId });
+    if (!orders || orders.length === 0)
+      return res
+        .status(404)
+        .json({ message: "No orders found for this customer." });
 
     return res.status(200).send(orders);
   } catch (error) {
@@ -22,8 +30,15 @@ router.get("/", admin, async (req, res) => {
 router.post("/new-order", user, async (req, res) => {
   try {
     const { error, value } = validateOrder(req.body);
-    if (error) return res.status(404).send(error.details[0].message);
+    if (error) {
+      return res.status(404).send(error.details[0].message);
+    }
+    const decodedToken = jwt.verify(
+      req.headers["auth-token"],
+      process.env.TOKEN_SECRET
+    );
 
+    const reqId = decodedToken.id;
     const order = new Order({
       ..._.pick(req.body, [
         "items",
@@ -32,6 +47,7 @@ router.post("/new-order", user, async (req, res) => {
         "totalPrice",
         "orderStatus",
       ]),
+      customerId: reqId,
     });
     await order.save();
     res.status(200).send(order);
@@ -47,19 +63,6 @@ router.get("/order/:id", admin, async (req, res) => {
     return res.status(200).send(order);
   } catch (error) {
     return res.status(404).json({ message: "No order found." });
-  }
-});
-
-router.put("/order-accepted/:id", async (req, res) => {
-  try {
-    const order = await Order.findByIdAndUpdate(req.params.id, {
-      orderStatus: "Accepted",
-    });
-    if (!order) return res.status(404).send(error.details[0].message);
-    await order.save();
-    return res.status(200).send(order);
-  } catch (error) {
-    return res.status(404).json({ message: "No product found." });
   }
 });
 
